@@ -1,3 +1,18 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" Specify a directory for plugins
+" - For Neovim: ~/.local/share/nvim/plugged
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plug')
+
+Plug 'lervag/vimtex'
+
+Plug 'https://github.com/Valloric/YouCompleteMe'
+
+" Initialize plugin system
+call plug#end()
+
 version 6.0
 if &cp | set nocp | endif
 map Q gq
@@ -11,7 +26,7 @@ inoremap  u
 let &cpo=s:cpo_save
 unlet s:cpo_save
 syntax on
-colorscheme koehler2
+colorscheme eldar
 set background=dark
 set backspace=indent,eol,start
 set directory=~/.vim/swap/
@@ -33,4 +48,6 @@ set ttimeout
 set ttimeoutlen=100
 set visualbell
 set wildmenu
+
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 " vim: set ft=vim :
