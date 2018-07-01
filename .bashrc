@@ -34,7 +34,7 @@ alias tgz='tar -pczf'
 alias pull='git pull -v'
 alias push='git push -v'
 alias openconnect='sudo openconnect asa-cluster.lrz.de'
-alias battlenet='wine .wine/drive_c/Program\ Files/Battle.net/Battle.net.exe'
+alias mp3dl='youtube-dl -x -i --audio-format mp3 --audio-quality 1'
 
 export VISUAL=vim
 export EDITOR="$VISUAL"
