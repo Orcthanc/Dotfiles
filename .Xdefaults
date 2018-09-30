@@ -1,12 +1,12 @@
-URxvt.saveLines:	5000
-URxvt.scrollBar:	false
+URxvt.saveLines:		5000
+URxvt.scrollBar:		false
 URxvt.secondaryScroll:	true
-URxvt.font: xft:	Bitstream Vera Sans Mono:pixelsize=12
-URxvt.urlLauncher: 	chromium
-urxvt*foreground:	white
-urxvt*background:	black
-urxvt*transparent:	true
-urxvt*shading:		30
+URxvt.font: 			xft:BitstreamVeraSansMono Nerd Font Mono:size=10
+URxvt.urlLauncher: 		chromium
+urxvt*foreground:		white
+urxvt*background:		black
+urxvt*transparent:		true
+urxvt*shading:			30
 
-urxvt*color4: 		#3465A4
-urxvt*color12:		#00DDFF
+urxvt*color4: 			#3465A4
+urxvt*color12:			#00F1FF
