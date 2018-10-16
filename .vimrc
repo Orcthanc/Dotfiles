@@ -80,8 +80,11 @@ let g:ncm2_pyclang#database_path = [
 	\ ]
 
 let g:ale_linters={
+	  \ 'c'  : ['clang', 'clangd', 'cppcheck', 'cquery', 'flawfinder', 'gcc'],
       \ 'cpp': [ 'clang', 'cppcheck', 'cpplint', 'gcc' ]
       \ }
+
+let g:ale_echo_msg_format = '%linter% says %s'
 
 " Vimtex compiler options
 let g:vimtex_compiler_progname = 'nvr'
