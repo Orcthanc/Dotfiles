@@ -28,13 +28,16 @@ alias ll='ls -l --color=auto'
 alias la='ls -A --color=auto'
 alias l='ls -CF --color=auto'
 
+alias cl='clear'
 alias cp='cp -aiv'
 alias grep='grep --color=always'
 alias tgz='tar -pczf'
 alias pull='git pull -v'
 alias push='git push -v'
-alias openconnect='sudo openconnect asa-cluster.lrz.de'
-alias mp3dl='youtube-dl -x -i --audio-format mp3 --audio-quality 1'
+alias vim='nvim'
+alias vktest='export VK_INSTANCE_LAYERS=VK_LAYER_LUNARG_standard_validation; '
+alias mp3dl='youtube-dl -x -i --audio-format mp3 --audio-quality 1 --add-metadata --write-thumbnail --geo-bypass -w'
 
-export VISUAL=vim
+export MPD_HOST="$HOME/.config/mpd/socket"
+export VISUAL=nvim
 export EDITOR="$VISUAL"
