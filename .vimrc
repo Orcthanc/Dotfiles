@@ -5,6 +5,9 @@ filetype off                  " required
 " - For Neovim: ~/.local/share/nvim/plugged
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.local/share/nvim/plugged')
+
+	Plug 'agude/vim-eldar'
+
 	" Vimtex
 	Plug 'lervag/vimtex'
 
@@ -80,11 +83,14 @@ let g:ncm2_pyclang#database_path = [
 	\ ]
 
 let g:ale_linters={
-	  \ 'c'  : ['clang', 'clangd', 'cppcheck', 'cquery', 'flawfinder', 'gcc'],
+	  \ 'c'  : [ 'clang', 'clangd', 'cppcheck', 'cquery', 'flawfinder', 'gcc'],
       \ 'cpp': [ 'clang', 'cppcheck', 'cpplint', 'gcc' ]
       \ }
 
-let g:ale_echo_msg_format = '%linter% says %s'
+let g:ale_echo_msg_format = '%linter%: %s'
+let g:ale_c_parse_makefile = 1
+let g:ale_cpp_gcc_options = ' -std=c++17 -Wall -I/include -I./src -I./external/imgui'
+let g:ale_cpp_clang_options = ' -std=c++17 -Wall -I/include -I./src -I./external/imgui'
 
 " Vimtex compiler options
 let g:vimtex_compiler_progname = 'nvr'
@@ -139,3 +145,4 @@ set ttimeout
 set ttimeoutlen=100
 set visualbell
 set wildmenu
+set nu rnu
