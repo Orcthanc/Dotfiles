@@ -1,49 +1,27 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
+" Figure out the system Python for Neovim.
+if exists("$VIRTUAL_ENV")
+    let g:python3_host_prog=substitute(system("which -a python3 | head -n2 | tail -n1"), "\n", '', 'g')
+else
+    let g:python3_host_prog=substitute(system("which python3"), "\n", '', 'g')
+endif
+
+let g:ale_disable_lsp = 1
+
 " Specify a directory for plugins
 " - For Neovim: ~/.local/share/nvim/plugged
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.local/share/nvim/plugged')
+	" Vimtex
+	" Plug 'lervag/vimtex'
 
+	" Colorscheme
 	Plug 'agude/vim-eldar'
 
-	" Vimtex
-	Plug 'lervag/vimtex'
-
-	" NCM2 Neovim Completion Manager2
-	Plug 'ncm2/ncm2'
-	Plug 'roxma/nvim-yarp'
-
-	" LanguageServers
-		" Client
-		Plug 'autozimu/LanguageClient-neovim', {
-    		\ 'branch': 'next',
-    		\ 'do': 'bash install.sh',
-    		\ }
-
-		" Bufword (Suggest next word)
-		Plug 'ncm2/ncm2-bufword'
-
-		" Path
-		Plug 'ncm2/ncm2-path'
-
-		" Github
-		Plug 'ncm2/ncm2-github'
-
-		" CSS
-		Plug 'ncm2/ncm2-cssomni'
-
-		" Python
-		Plug 'ncm2/ncm2-jedi'
-
-		" C/C++
-		Plug 'ncm2/ncm2-pyclang'
-
-		" Sippet completion
-		Plug 'ncm2/ncm2-ultisnips'
-		Plug 'SirVer/ultisnips'
-
+	" Autocomplete
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
 	
 	" ALE
 	Plug 'https://github.com/w0rp/ale.git'
@@ -55,47 +33,18 @@ call plug#begin('~/.local/share/nvim/plugged')
 	" Git
 	Plug 'airblade/vim-gitgutter'
 
+	" Lot of things for c/c++
+	Plug 'vim-scripts/c.vim'
+
 " Initialize plugin system
 call plug#end()
 
-" NCM2
-set completeopt=noinsert,menuone,noselect
+" let g:ale_linters={
+"	\ 'c'  : ['clang', 'clangd', 'cppcheck', 'cquery', 'flawfinder', 'gcc'],
+"	\ 'cpp': [ 'clang', 'cppcheck', 'cpplint', 'gcc' ]
+"	\ }
 
-" Make NCM2 faster
-let ncm2#popup_delay = 5
-
-" Trigger 
-augroup autocomplete_triggers
-	autocmd BufEnter * call ncm2#enable_for_buffer()
-	autocmd TextChangedI * call ncm2#auto_trigger()
-augroup END
-
-" Map autocomplete to Tab
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" C/C++ Language Server
-let g:ncm2_pyclang#library_path = '/usr/lib/libclang.so.6.0'
-let g:ncm2_pyclang#database_path = [
-	\ 'compile_commands.json',
-	\ 'build/compile_commands.json',
-	\ '../build/compile_commands.json'
-	\ ]
-
-let g:ale_linters={
-	  \ 'c'  : [ 'clang', 'clangd', 'cppcheck', 'cquery', 'flawfinder', 'gcc'],
-      \ 'cpp': [ 'clang', 'cppcheck', 'cpplint', 'gcc' ]
-      \ }
-
-let g:ale_echo_msg_format = '%linter%: %s'
-let g:ale_c_parse_makefile = 1
-let g:ale_cpp_gcc_options = ' -std=c++17 -Wall -I/include -I./src -I./external/imgui'
-let g:ale_cpp_clang_options = ' -std=c++17 -Wall -I/include -I./src -I./external/imgui'
-
-" Vimtex compiler options
-let g:vimtex_compiler_progname = 'nvr'
-let g:vimtex_compiler_method = 'arara'
-let g:ncm2_look_enabled = 1
+" let g:ale_echo_msg_format = '%linter% says %s'
 
 "Make airline pretty
 let g:airline_theme = 'wombat'
@@ -103,6 +52,132 @@ let g:airline_powerline_fonts = 1
 
 " Make ale pretty
 let g:airline#extensions#ale#enabled = 1
+
+" Coc
+" Tab in Autocomplete-window
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" <C-Space> for autocompletion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" <cr> to confirm completion
+if exists('*complete_info')
+  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Applying codeAction to the selected region.
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Use CTRL-S for selections ranges.
+" Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support.
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline.
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" Mappings for CoCList
+" Show all diagnostics.
+nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list.
+nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
 
 " Mess with the vim compatability options to make sure Netrw runs
 version 6.0
@@ -128,21 +203,32 @@ set background=dark
 set backspace=indent,eol,start
 set display=truncate
 set fileencodings=ucs-bom,utf-8,default,latin1
+set foldlevel=4
+set foldmethod=syntax
 set helplang=en
+set hidden
 set history=200
 set incsearch
 set langnoremap
-set nolangremap
 set mouse=a
+set nolangremap
 set nrformats=bin,hex
+set nu rnu
 set ruler
 set scrolloff=5
+set shiftwidth=4
+set shortmess+=c
 set showcmd
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc,.png,.jpg
 set tabstop=4
-set shiftwidth=4
 set ttimeout
 set ttimeoutlen=100
+set updatetime=300
 set visualbell
 set wildmenu
-set nu rnu
+
+
+inoremap /**<CR> /**<CR><CR>/<Esc>kA<Tab>
+inoremap /**< /**<  */<Esc>3ha
+imap /< /**<
+nnoremap gm :make<CR>
